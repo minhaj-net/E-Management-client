@@ -1,3 +1,4 @@
+import FeaturesSection from "./FeatureCard";
 import HeroBanner from "./HeroBanner";
 import HotelsSection from "./HotelsSection";
 
@@ -7,6 +8,7 @@ export default function HomePage() {
     <main>
       <HeroBanner />
       <HotelsSection></HotelsSection> 
+      <FeaturesSection></FeaturesSection>
     </main>
   );
 }
