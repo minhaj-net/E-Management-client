@@ -1,6 +1,7 @@
 import FeaturesSection from "./FeatureCard";
 import HeroBanner from "./HeroBanner";
 import HotelsSection from "./HotelsSection";
+import EventsSection from "./Iteam";
 
 
 export default function HomePage() {
@@ -9,6 +10,7 @@ export default function HomePage() {
       <HeroBanner />
       <HotelsSection></HotelsSection> 
       <FeaturesSection></FeaturesSection>
+      <EventsSection></EventsSection>
     </main>
   );
 }

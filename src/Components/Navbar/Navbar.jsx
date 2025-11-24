@@ -99,7 +99,6 @@ export default function Navbar() {
           <div className="hidden md:flex items-center">
             {!isLoggedIn ? (
               <div className="flex gap-3">
-                <ThemeToggler></ThemeToggler>
                 <button
                   onClick={handleLogin}
                   className="px-4 py-2 text-white border border-white rounded-lg hover:bg-white hover:text-blue-600 transition-all font-medium"
