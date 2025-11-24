@@ -36,7 +36,7 @@ export default function HotelsSection() {
     <section className="py-8 px-4">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold dark:text-white flex items-center gap-2">
-          <span className="bg-red-600 text-white px-2 py-1 rounded">H</span> HOTELS
+          <span className="bg-red-500 text-white px-2 py-1 rounded">H</span> HOTELS
         </h2>
         <p className="text-gray-500 dark:text-gray-300">dont forget book your room</p>
       </div>
