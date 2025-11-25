@@ -35,6 +35,7 @@ import Link from "next/link";
 import { Menu, X, User, ChevronDown } from "lucide-react";
 import Image from "next/image";
 import ThemeToggler from "../ThemeToggler/ThemeToggler";
+import { useAuth } from "@/context/AuthProvider";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -42,6 +43,8 @@ export default function Navbar() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [userName] = useState("John Doe");
 
+  const { user ,logOut} = useAuth();
+  console.log(user);
   const toggleMenu = () => setIsOpen(!isOpen);
   const toggleDropdown = () => setShowDropdown(!showDropdown);
 
@@ -51,8 +54,16 @@ export default function Navbar() {
   };
 
   const handleLogout = () => {
+    console.log("after logout");
     setIsLoggedIn(false);
     setShowDropdown(false);
+    logOut()
+    .then(res=>{
+      const user=res.user
+      console.log(user);
+    }).catch(err=>{
+      console.log(err.message);
+    })
   };
 
   const closeMenu = () => setIsOpen(false);
@@ -97,20 +108,15 @@ export default function Navbar() {
 
           {/* Auth Section - Desktop */}
           <div className="hidden md:flex items-center">
-            {!isLoggedIn ? (
+            {!user ? (
               <div className="flex gap-3">
-                <button
-                  onClick={handleLogin}
-                  className="px-4 py-2 text-white border border-white rounded-lg hover:bg-white hover:text-blue-600 transition-all font-medium"
-                >
-                  Login
-                </button>
-                <button
+                <Link
+                  href={"/Register"}
                   onClick={handleLogin}
                   className="px-4 py-2 bg-white text-blue-600 rounded-lg hover:bg-blue-50 transition-all font-medium"
                 >
-                  Register
-                </button>
+                  Sign In
+                </Link>
               </div>
             ) : (
               <div className="relative">
@@ -118,8 +124,15 @@ export default function Navbar() {
                   onClick={toggleDropdown}
                   className="flex items-center gap-2 px-4 py-2 bg-white text-blue-600 rounded-lg hover:bg-blue-50 transition-all font-medium"
                 >
-                  <User size={20} />
-                  <span>{userName}</span>
+                  <div>
+                    <Image
+                      src={user.photoURL}
+                      alt="My Picture"
+                      width={35}
+                      height={35}
+                    />
+                  </div>
+                  <span>{user.displayName}</span>
                   <ChevronDown
                     size={16}
                     className={`transition-transform ${
@@ -133,7 +146,7 @@ export default function Navbar() {
                     <div className="px-4 py-3 border-b border-gray-100">
                       <p className="text-sm text-gray-500">Signed in as</p>
                       <p className="text-sm font-semibold text-gray-900">
-                        {userName}
+                        {user.displayName}
                       </p>
                     </div>
                     <Link
@@ -141,14 +154,14 @@ export default function Navbar() {
                       className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
                       onClick={closeDropdown}
                     >
-                      Add Product
+                      Add Event
                     </Link>
                     <Link
                       href="/manage-products"
                       className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
                       onClick={closeDropdown}
                     >
-                      Manage Products
+                      Manage Event
                     </Link>
                     <div className="border-t border-gray-100 mt-2">
                       <button
@@ -206,18 +219,13 @@ export default function Navbar() {
             <div className="border-t border-blue-600 pt-3 mt-3">
               {!isLoggedIn ? (
                 <div className="space-y-2 px-3">
-                  <button
-                    onClick={handleLogin}
-                    className="w-full px-4 py-2 text-white border border-white rounded-lg hover:bg-white hover:text-blue-600 transition-all font-medium"
-                  >
-                    Login
-                  </button>
-                  <button
+                  <Link
+                    href={"/Register"}
                     onClick={handleLogin}
                     className="w-full px-4 py-2 bg-white text-blue-600 rounded-lg hover:bg-blue-50 transition-all font-medium"
                   >
-                    Register
-                  </button>
+                    Sign In
+                  </Link>
                 </div>
               ) : (
                 <div className="space-y-1">

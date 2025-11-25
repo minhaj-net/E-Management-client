@@ -13,6 +13,11 @@ const nextConfig = {
         hostname: "images.unsplash.com",
         pathname: "/**", // সব Unsplash image allow
       },
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+        pathname: "/**", // Google profile images allow
+      },
     ],
   },
 };
