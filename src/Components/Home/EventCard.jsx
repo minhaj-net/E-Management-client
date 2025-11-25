@@ -14,6 +14,7 @@ import {
   Award,
 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 import { useState } from "react";
 
@@ -157,13 +158,13 @@ export default function EventCard({ event }) {
         </div>
 
         {/* CTA Button */}
-        <button className="w-full bg-linear-to-r from-purple-600 to-pink-600 text-white py-3 rounded-xl font-semibold hover:from-purple-700 hover:to-pink-700 transition-all transform hover:scale-105 flex items-center justify-center gap-2 group/btn shadow-lg">
+        <Link href={`/events/${event._id}`} className="w-full bg-linear-to-r from-purple-600 to-pink-600 text-white py-3 rounded-xl font-semibold hover:from-purple-700 hover:to-pink-700 transition-all transform hover:scale-105 flex items-center justify-center gap-2 group/btn shadow-lg">
           View Details
           <ArrowRight
             size={18}
             className="group-hover/btn:translate-x-1 transition-transform"
           />
-        </button>
+        </Link>
       </div>
 
       {/* Decorative Corner */}
