@@ -4,6 +4,7 @@ import { ThemeProvider } from "next-themes";
 import Navbar from "@/Components/Navbar/Navbar";
 import { AuthProvider } from "@/context/AuthProvider";
 import { Toaster } from "react-hot-toast";
+import EventFooter from "@/Components/Home/Footer";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -29,6 +30,7 @@ export default function RootLayout({ children }) {
           <Toaster position="top-center" reverseOrder={false} />
           <Navbar />
           {children}
+          <EventFooter></EventFooter>
         </AuthProvider>
       </body>
     </html>

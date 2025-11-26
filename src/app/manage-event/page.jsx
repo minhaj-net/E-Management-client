@@ -1,13 +1,13 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Eye, Trash2, Edit, Calendar, X } from "lucide-react";
-import toast from "react-hot-toast";
+import { Eye, Trash2, Edit, Calendar, X, Sparkles, TrendingUp } from "lucide-react";
 
 export default function ManageEvents() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [formData, setFormData] = useState({
     title: "",
     category: "",
@@ -76,13 +76,23 @@ export default function ManageEvents() {
           )
         );
 
-        toast.success("✅ Event updated successfully!");
+        // Toast success notification
+        const toastEl = document.createElement('div');
+        toastEl.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-bounce';
+        toastEl.textContent = '✅ Event updated successfully!';
+        document.body.appendChild(toastEl);
+        setTimeout(() => toastEl.remove(), 3000);
+
         setShowModal(false);
         setEditingEvent(null);
       }
     } catch (error) {
       console.error("Update error:", error);
-      toast.error("❌ Failed to update event!");
+      const toastEl = document.createElement('div');
+      toastEl.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+      toastEl.textContent = '❌ Failed to update event!';
+      document.body.appendChild(toastEl);
+      setTimeout(() => toastEl.remove(), 3000);
     }
   };
 
@@ -109,62 +119,137 @@ export default function ManageEvents() {
     }
   };
 
+  const handleMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setMousePosition({
+      x: (e.clientX - rect.left) / rect.width,
+      y: (e.clientY - rect.top) / rect.height,
+    });
+  };
+
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <div className="text-gray-600 text-lg">Loading events...</div>
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+        <div className="relative">
+          <div className="w-20 h-20 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
+          <Sparkles className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-8 h-8 text-purple-400 animate-pulse" />
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <Calendar className="w-8 h-8 text-blue-600" />
-            Manage Events
-          </h1>
-          <p className="text-gray-600 mt-2">Total Events: {events.length}</p>
+    <div 
+      className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4 md:p-8 relative overflow-hidden"
+      onMouseMove={handleMouseMove}
+    >
+      {/* Animated Background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[...Array(15)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute rounded-full mix-blend-screen opacity-20 animate-pulse"
+            style={{
+              width: `${Math.random() * 300 + 50}px`,
+              height: `${Math.random() * 300 + 50}px`,
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              background: `radial-gradient(circle, ${
+                ['rgba(139, 92, 246, 0.4)', 'rgba(236, 72, 153, 0.4)', 'rgba(59, 130, 246, 0.4)'][i % 3]
+              } 0%, transparent 70%)`,
+              animationDelay: `${Math.random() * 5}s`,
+              animationDuration: `${Math.random() * 10 + 10}s`
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Parallax Layer */}
+      <div
+        className="absolute inset-0 transition-transform duration-300 pointer-events-none"
+        style={{
+          transform: `translate(${mousePosition.x * 20}px, ${mousePosition.y * 20}px)`
+        }}
+      >
+        <div className="absolute top-20 left-20 w-72 h-72 bg-purple-500 rounded-full filter blur-3xl opacity-20 animate-pulse" />
+        <div className="absolute bottom-20 right-20 w-96 h-96 bg-pink-500 rounded-full filter blur-3xl opacity-20 animate-pulse" style={{ animationDelay: '1s' }} />
+      </div>
+
+      <div className="max-w-7xl mx-auto relative z-10">
+        {/* Header */}
+        <div className="mb-8 backdrop-blur-xl bg-white/10 rounded-3xl p-8 border border-white/20 shadow-2xl">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+              <h1 className="text-4xl md:text-5xl font-bold text-white flex items-center gap-4 mb-2">
+                <div className="p-3 bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl">
+                  <Calendar className="w-8 h-8 text-white" />
+                </div>
+                Manage Events
+              </h1>
+              <p className="text-gray-300 text-lg">Track and organize your events seamlessly</p>
+            </div>
+            
+            <div className="flex gap-4">
+              <div className="backdrop-blur-md bg-white/10 rounded-2xl px-6 py-4 border border-white/20">
+                <div className="flex items-center gap-3">
+                  <TrendingUp className="w-6 h-6 text-purple-400" />
+                  <div>
+                    <div className="text-3xl font-bold text-white">{events.length}</div>
+                    <div className="text-sm text-gray-400">Total Events</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Mobile Cards */}
         <div className="grid gap-4 md:hidden">
-          {events.map((event) => (
+          {events.map((event, idx) => (
             <div
               key={event._id}
-              className="bg-white rounded-lg shadow-sm border border-gray-200 p-4"
+              className="backdrop-blur-xl bg-white/10 rounded-2xl border border-white/20 p-5 shadow-2xl hover:shadow-purple-500/50 transition-all duration-300 hover:scale-105"
+              style={{
+                animationDelay: `${idx * 0.1}s`
+              }}
             >
-              <div className="mb-3">
-                <h3 className="font-semibold text-gray-900 text-lg mb-1">
+              <div className="mb-4">
+                <h3 className="font-bold text-white text-xl mb-3">
                   {event.title || event.name}
                 </h3>
-                <p className="text-sm text-gray-600 mb-2">
-                  📍 {event.location || "Location not set"}
-                </p>
-                <p className="text-sm text-gray-600">
-                  📅 {event.date || "Date not set"}
-                </p>
+                <div className="space-y-2">
+                  <p className="text-sm text-gray-300 flex items-center gap-2">
+                    <span className="w-2 h-2 bg-purple-400 rounded-full"></span>
+                    {event.location || "Location not set"}
+                  </p>
+                  <p className="text-sm text-gray-300 flex items-center gap-2">
+                    <span className="w-2 h-2 bg-pink-400 rounded-full"></span>
+                    {event.date || "Date not set"}
+                  </p>
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-500/30 text-purple-200 border border-purple-400/30">
+                    {event.category || "General"}
+                  </span>
+                </div>
               </div>
 
-              <div className="flex gap-2 pt-3 border-t border-gray-100">
+              <div className="flex gap-2 pt-4 border-t border-white/10">
                 <button
                   onClick={() => handleView(event._id)}
-                  className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition text-sm"
+                  className="flex-1 flex items-center justify-center gap-2 px-3 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all duration-300 hover:scale-105 font-semibold"
                 >
                   <Eye className="w-4 h-4" />
                   View
                 </button>
                 <button
                   onClick={() => handleUpdate(event)}
-                  className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition text-sm"
+                  className="flex-1 flex items-center justify-center gap-2 px-3 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-all duration-300 hover:scale-105 font-semibold"
                 >
                   <Edit className="w-4 h-4" />
                   Edit
                 </button>
                 <button
                   onClick={() => handleDelete(event._id)}
-                  className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition text-sm"
+                  className="flex-1 flex items-center justify-center gap-2 px-3 py-3 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-all duration-300 hover:scale-105 font-semibold"
                 >
                   <Trash2 className="w-4 h-4" />
                   Delete
@@ -175,65 +260,71 @@ export default function ManageEvents() {
         </div>
 
         {/* Desktop Table */}
-        <div className="hidden md:block bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div className="hidden md:block backdrop-blur-xl bg-white/10 rounded-3xl border border-white/20 overflow-hidden shadow-2xl">
           <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
+            <thead className="bg-white/5 border-b border-white/20">
               <tr>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">
+                <th className="px-6 py-5 text-left text-sm font-bold text-white">
                   Event Name
                 </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">
+                <th className="px-6 py-5 text-left text-sm font-bold text-white">
                   Date
                 </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">
+                <th className="px-6 py-5 text-left text-sm font-bold text-white">
                   Location
                 </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">
+                <th className="px-6 py-5 text-left text-sm font-bold text-white">
                   Category
                 </th>
-                <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900">
+                <th className="px-6 py-5 text-center text-sm font-bold text-white">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
-              {events.map((event) => (
-                <tr key={event._id} className="hover:bg-gray-50 transition">
-                  <td className="px-6 py-4">
-                    <div className="font-medium text-gray-900">
+            <tbody className="divide-y divide-white/10">
+              {events.map((event, idx) => (
+                <tr 
+                  key={event._id} 
+                  className="hover:bg-white/5 transition-all duration-300"
+                  style={{
+                    animationDelay: `${idx * 0.05}s`
+                  }}
+                >
+                  <td className="px-6 py-5">
+                    <div className="font-semibold text-white text-lg">
                       {event.title || event.name}
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">
+                  <td className="px-6 py-5 text-sm text-gray-300">
                     {event.date || "Not set"}
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">
+                  <td className="px-6 py-5 text-sm text-gray-300">
                     {event.location || "Not set"}
                   </td>
-                  <td className="px-6 py-4">
-                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                  <td className="px-6 py-5">
+                    <span className="inline-flex items-center px-4 py-2 rounded-full text-xs font-semibold bg-purple-500/30 text-purple-200 border border-purple-400/30">
                       {event.category || "General"}
                     </span>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-5">
                     <div className="flex items-center justify-center gap-2">
                       <button
                         onClick={() => handleView(event._id)}
-                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                        className="p-3 text-blue-400 hover:bg-blue-500/20 rounded-xl transition-all duration-300 hover:scale-110 border border-blue-400/30"
                         title="View"
                       >
                         <Eye className="w-5 h-5" />
                       </button>
                       <button
                         onClick={() => handleUpdate(event)}
-                        className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition"
+                        className="p-3 text-green-400 hover:bg-green-500/20 rounded-xl transition-all duration-300 hover:scale-110 border border-green-400/30"
                         title="Edit"
                       >
                         <Edit className="w-5 h-5" />
                       </button>
                       <button
                         onClick={() => handleDelete(event._id)}
-                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"
+                        className="p-3 text-red-400 hover:bg-red-500/20 rounded-xl transition-all duration-300 hover:scale-110 border border-red-400/30"
                         title="Delete"
                       >
                         <Trash2 className="w-5 h-5" />
@@ -249,21 +340,24 @@ export default function ManageEvents() {
 
       {/* Edit Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between p-6 border-b">
-              <h2 className="text-xl font-bold text-gray-900">Update Event</h2>
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-300">
+          <div className="backdrop-blur-xl bg-white/10 rounded-3xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto border border-white/20 animate-in zoom-in duration-300">
+            <div className="flex items-center justify-between p-6 border-b border-white/20">
+              <h2 className="text-2xl font-bold text-white flex items-center gap-3">
+                <Edit className="w-6 h-6 text-purple-400" />
+                Update Event
+              </h2>
               <button
                 onClick={() => setShowModal(false)}
-                className="text-gray-400 hover:text-gray-600 transition"
+                className="text-gray-400 hover:text-white transition-all duration-300 hover:rotate-90 p-2 hover:bg-white/10 rounded-xl"
               >
                 <X className="w-6 h-6" />
               </button>
             </div>
 
-            <div className="p-6 space-y-4">
+            <div className="p-6 space-y-5">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-white mb-2">
                   Event Title
                 </label>
                 <input
@@ -271,12 +365,13 @@ export default function ManageEvents() {
                   name="title"
                   value={formData.title}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-white/10 backdrop-blur-md text-white border border-white/20 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder-gray-400 transition-all duration-300"
+                  placeholder="Enter event title"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-white mb-2">
                   Category
                 </label>
                 <input
@@ -284,12 +379,13 @@ export default function ManageEvents() {
                   name="category"
                   value={formData.category}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-white/10 backdrop-blur-md text-white border border-white/20 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder-gray-400 transition-all duration-300"
+                  placeholder="Enter category"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-white mb-2">
                   Date
                 </label>
                 <input
@@ -298,12 +394,12 @@ export default function ManageEvents() {
                   value={formData.date}
                   onChange={handleInputChange}
                   placeholder="e.g., Feb 5, 2025"
-                  className="w-full px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-white/10 backdrop-blur-md text-white border border-white/20 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder-gray-400 transition-all duration-300"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-white mb-2">
                   Location
                 </label>
                 <input
@@ -311,20 +407,21 @@ export default function ManageEvents() {
                   name="location"
                   value={formData.location}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-white/10 backdrop-blur-md text-white border border-white/20 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder-gray-400 transition-all duration-300"
+                  placeholder="Enter location"
                 />
               </div>
 
               <div className="flex gap-3 pt-4">
                 <button
                   onClick={() => setShowModal(false)}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
+                  className="flex-1 px-6 py-3 border-2 border-white/20 text-white rounded-xl hover:bg-white/10 transition-all duration-300 hover:scale-105 font-semibold"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSubmitUpdate}
-                  className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+                  className="flex-1 px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl hover:shadow-lg hover:shadow-green-500/50 transition-all duration-300 hover:scale-105 font-semibold"
                 >
                   Update Event
                 </button>
