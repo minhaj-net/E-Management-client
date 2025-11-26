@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { 
-  Calendar, 
-  MapPin, 
-  Users, 
+import {
+  Calendar,
+  MapPin,
+  Users,
   Clock,
   DollarSign,
   Star,
@@ -15,57 +15,53 @@ import {
   Award,
   Sparkles,
   CheckCircle2,
-  X
+  X,
 } from "lucide-react";
-import AOS from "aos";
-import "aos/dist/aos.css";
-import { useSearchParams } from "next/navigation";
-
-// Sample event data
-const eventData = {
-  id: 1,
-  image: "https://images.unsplash.com/photo-1511578314322-379afb476865?w=1200&q=80",
-  title: "Corporate Business Summit 2024",
-  category: "Conference",
-  date: "Dec 15, 2024",
-  time: "9:00 AM - 5:00 PM",
-  location: "Grand Convention Center, New York",
-  attendees: 500,
-  price: "$299",
-  rating: 4.8,
-  trending: true,
-  featured: true,
-  description: "Join us for the most anticipated business summit of 2024! This comprehensive event brings together industry leaders, innovative entrepreneurs, and forward-thinking professionals from around the globe. Experience inspiring keynote speeches, interactive workshops, and valuable networking opportunities that will transform your business approach.\n\nOur carefully curated program features insights from Fortune 500 CEOs, emerging startup founders, and renowned business strategists. Discover the latest trends in digital transformation, sustainability practices, and leadership excellence.\n\nWhether you're looking to expand your professional network, gain actionable insights, or explore new business opportunities, this summit offers an unparalleled platform for growth and collaboration.",
-  features: [
+import { useParams, useRouter } from "next/navigation";
+import Image from "next/image";
+const features = [
     "20+ Expert Speakers",
     "Interactive Workshops",
     "Networking Sessions",
     "Premium Lunch & Refreshments",
     "Digital Resource Kit",
-    "Certificate of Attendance"
-  ]
-};
-// 
-
-  const res = await fetch(`http://localhost:5000/events`);
-  const event = await res.json();
+    "Certificate of Attendance",
+  ];
 
 export default function EventDetailsPage() {
   const [isLiked, setIsLiked] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
-  console.log("event data",event);
-  const searchParams = useSearchParams();
-    const id = searchParams.get("id"); // query parameter থেকে id
-  console.log(id);
-  //  const { id } = params;
-   console.log(id);
+  const [eventData, setEvent] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const { id } = useParams();
+  const router = useRouter();
+    
+  // Fetch event data
   useEffect(() => {
-    AOS.init({ duration: 1000, once: true });
-  }, []);
+    if (!id) return;
+
+    setLoading(true);
+    fetch(`http://localhost:5000/events/${id}`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch event");
+        return res.json();
+      })
+      .then((data) => {
+        console.log("✅ Event data loaded:", data);
+        setEvent(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("❌ Error fetching event:", err);
+        setError(err.message);
+        setLoading(false);
+      });
+  }, [id]);
 
   const handleBack = () => {
-    console.log("Go back");
-    // Add your navigation logic here
+    router.back();
   };
 
   const handleShare = () => {
@@ -73,7 +69,7 @@ export default function EventDetailsPage() {
   };
 
   const handleBookNow = () => {
-    console.log("Book event");
+    console.log("Booking event:", eventData?.title);
     // Add your booking logic here
   };
 
@@ -85,19 +81,79 @@ export default function EventDetailsPage() {
     Concert: "from-green-500 to-emerald-500",
     Fundraiser: "from-yellow-500 to-amber-500",
     Corporate: "from-slate-500 to-gray-500",
-    Sports: "from-teal-500 to-cyan-500"
+    Sports: "from-teal-500 to-cyan-500",
   };
+ 
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-pink-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-purple-600 mx-auto mb-4"></div>
+          <p className="text-xl text-gray-600">Loading event details...</p>
+        </div>
+      </div>
+    );
+  }
 
+  // Error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-pink-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl p-8 shadow-lg max-w-md w-full text-center">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <X className="text-red-600" size={32} />
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            Error Loading Event
+          </h2>
+          <p className="text-gray-600 mb-6">{error}</p>
+          <button
+            onClick={() => router.back()}
+            className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-purple-700 hover:to-pink-700 transition-all"
+          >
+            Go Back
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // No data state
+  if (!eventData) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-pink-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl p-8 shadow-lg max-w-md w-full text-center">
+          <p className="text-xl text-gray-600">Event not found</p>
+          <button
+            onClick={() => router.back()}
+            className="mt-6 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-xl font-semibold"
+          >
+            Go Back
+          </button>
+        </div>
+      </div>
+    );
+  }
+  const processFee = 5;
+  const service = 10;
+  const price = Number(eventData.price.replace(/[^0-9.]/g, '')) || 0;
+  const finalTotal = price + service + processFee;
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-pink-50 dark:from-gray-950 dark:via-purple-950 dark:to-pink-950">
       {/* Hero Banner */}
-      <div className="relative h-[60vh] overflow-hidden" data-aos="fade-down">
-        <img
-          src={eventData.image}
-          alt={eventData.title}
-          className="w-full h-full object-cover"
-        />
-        
+      <div className="relative h-[60vh] overflow-hidden">
+        <div className="relative w-full h-full">
+          <Image
+            src={eventData.image || "/placeholder-event.jpg"}
+            alt={eventData.title || "Event"}
+            fill
+            className="object-cover"
+            priority
+            unoptimized
+          />
+        </div>
+
         {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
 
@@ -114,9 +170,9 @@ export default function EventDetailsPage() {
           <button
             onClick={() => setIsLiked(!isLiked)}
             className={`p-3 rounded-full backdrop-blur-md transition-all transform hover:scale-110 border ${
-              isLiked 
-                ? 'bg-red-500 text-white border-red-500' 
-                : 'bg-white/10 text-white border-white/20 hover:bg-white/20'
+              isLiked
+                ? "bg-red-500 text-white border-red-500"
+                : "bg-white/10 text-white border-white/20 hover:bg-white/20"
             }`}
           >
             <Heart size={20} fill={isLiked ? "currentColor" : "none"} />
@@ -147,17 +203,25 @@ export default function EventDetailsPage() {
 
         {/* Title & Category */}
         <div className="absolute bottom-8 left-8 right-8">
-          <div className={`inline-block bg-gradient-to-r ${categoryColors[eventData.category]} text-white px-4 py-2 rounded-full text-sm font-bold mb-4`}>
-            {eventData.category}
+          <div
+            className={`inline-block bg-gradient-to-r ${
+              categoryColors[eventData.category] || categoryColors.Corporate
+            } text-white px-4 py-2 rounded-full text-sm font-bold mb-4`}
+          >
+            {eventData.category || "Event"}
           </div>
           <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
             {eventData.title}
           </h1>
-          <div className="flex items-center gap-2 bg-white/90 backdrop-blur-md px-4 py-2 rounded-full w-fit">
-            <Star size={20} className="fill-yellow-400 text-yellow-400" />
-            <span className="font-bold text-gray-900">{eventData.rating}</span>
-            <span className="text-gray-600">Rating</span>
-          </div>
+          {eventData.rating && (
+            <div className="flex items-center gap-2 bg-white/90 backdrop-blur-md px-4 py-2 rounded-full w-fit">
+              <Star size={20} className="fill-yellow-400 text-yellow-400" />
+              <span className="font-bold text-gray-900">
+                {eventData.rating}
+              </span>
+              <span className="text-gray-600">Rating</span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -167,74 +231,111 @@ export default function EventDetailsPage() {
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
             {/* Event Info Cards */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4" data-aos="fade-up">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-lg border border-gray-100 dark:border-gray-800">
                 <Calendar className="text-purple-600 mb-2" size={24} />
                 <p className="text-sm text-gray-600 dark:text-gray-400">Date</p>
-                <p className="font-bold text-gray-900 dark:text-white">{eventData.date}</p>
+                <p className="font-bold text-gray-900 dark:text-white">
+                  {eventData.date || "TBA"}
+                </p>
               </div>
-              
+
               <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-lg border border-gray-100 dark:border-gray-800">
                 <Clock className="text-blue-600 mb-2" size={24} />
                 <p className="text-sm text-gray-600 dark:text-gray-400">Time</p>
-                <p className="font-bold text-gray-900 dark:text-white text-sm">{eventData.time}</p>
+                <p className="font-bold text-gray-900 dark:text-white text-sm">
+                  {eventData.time || "TBA"}
+                </p>
               </div>
-              
+
               <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-lg border border-gray-100 dark:border-gray-800">
                 <Users className="text-green-600 mb-2" size={24} />
-                <p className="text-sm text-gray-600 dark:text-gray-400">Attendees</p>
-                <p className="font-bold text-gray-900 dark:text-white">{eventData.attendees}+</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Attendees
+                </p>
+                <p className="font-bold text-gray-900 dark:text-white">
+                  {eventData.attendees || 0}+
+                </p>
               </div>
-              
+
               <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-lg border border-gray-100 dark:border-gray-800">
                 <DollarSign className="text-red-600 mb-2" size={24} />
-                <p className="text-sm text-gray-600 dark:text-gray-400">Price</p>
-                <p className="font-bold text-gray-900 dark:text-white">{eventData.price}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Price
+                </p>
+                <p className="font-bold text-gray-900 dark:text-white">
+                  {eventData.price || "Free"}
+                </p>
               </div>
             </div>
 
             {/* Description */}
-            <div className="bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-lg border border-gray-100 dark:border-gray-800" data-aos="fade-up" data-aos-delay="100">
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                <Sparkles className="text-purple-600" size={28} />
-                About This Event
-              </h2>
-              <div className="prose prose-lg max-w-none text-gray-600 dark:text-gray-300">
-                {eventData.description.split('\n\n').map((paragraph, idx) => (
-                  <p key={idx} className="mb-4 leading-relaxed">
-                    {paragraph}
-                  </p>
-                ))}
+            {eventData.description && (
+              <div className="bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-lg border border-gray-100 dark:border-gray-800">
+                <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                  <Sparkles className="text-purple-600" size={28} />
+                  About This Event
+                </h2>
+                <div className="prose prose-lg max-w-none text-gray-600 dark:text-gray-300">
+                  {eventData.description.split("\n\n").map((paragraph, idx) => (
+                    <p key={idx} className="mb-4 leading-relaxed">
+                      {paragraph}
+                      {paragraph}
+                      {paragraph}
+                      {paragraph}
+                      {paragraph}
+                      {paragraph}
+                      {paragraph}
+                      {paragraph}
+                    </p>
+                  ))}
+                </div>
               </div>
-            </div>
-
+            )}
+             
+         
+              
             {/* Features */}
-            <div className="bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-lg border border-gray-100 dark:border-gray-800" data-aos="fade-up" data-aos-delay="200">
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
-                What's Included
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {eventData.features.map((feature, idx) => (
-                  <div key={idx} className="flex items-center gap-3 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 p-4 rounded-xl">
-                    <CheckCircle2 className="text-purple-600 flex-shrink-0" size={24} />
-                    <span className="font-medium text-gray-900 dark:text-white">{feature}</span>
-                  </div>
-                ))}
+
+                <div className="bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-lg border border-gray-100 dark:border-gray-800">
+                <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
+                  What's Included
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {features.map((feature, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-center gap-3 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 p-4 rounded-xl"
+                    >
+                      <CheckCircle2
+                        className="text-purple-600 flex-shrink-0"
+                        size={24}
+                      />
+                      <span className="font-medium text-gray-900 dark:text-white">
+                        {feature}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+     
           </div>
 
           {/* Sidebar */}
           <div className="lg:col-span-1">
             <div className="sticky top-6 space-y-6">
               {/* Price Card */}
-              <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-2xl border border-gray-100 dark:border-gray-800" data-aos="fade-left">
+              <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-2xl border border-gray-100 dark:border-gray-800">
                 <div className="text-center mb-6">
-                  <p className="text-gray-600 dark:text-gray-400 mb-2">Event Price</p>
+                  <p className="text-gray-600 dark:text-gray-400 mb-2">
+                    Event Price
+                  </p>
                   <div className="text-5xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                    {eventData.price}
+                    {eventData.price || "Free"}
                   </div>
-                  <p className="text-gray-600 dark:text-gray-400 mt-2">per person</p>
+                  <p className="text-gray-600 dark:text-gray-400 mt-2">
+                    per person
+                  </p>
                 </div>
 
                 <button
@@ -246,36 +347,50 @@ export default function EventDetailsPage() {
 
                 <div className="space-y-3 pt-4 border-t border-gray-200 dark:border-gray-700">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600 dark:text-gray-400">Service Fee</span>
-                    <span className="font-semibold text-gray-900 dark:text-white">$10</span>
+                    <span className="text-gray-600 dark:text-gray-400">
+                      Service Fee
+                    </span>
+                    <span className="font-semibold text-gray-900 dark:text-white">
+                      ${service}
+                    </span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600 dark:text-gray-400">Processing Fee</span>
-                    <span className="font-semibold text-gray-900 dark:text-white">$5</span>
+                    <span className="text-gray-600 dark:text-gray-400">
+                      Processing Fee
+                    </span>
+                    <span className="font-semibold text-gray-900 dark:text-white">
+                      ${processFee}
+                    </span>
                   </div>
                   <div className="flex items-center justify-between pt-3 border-t border-gray-200 dark:border-gray-700">
-                    <span className="font-bold text-gray-900 dark:text-white">Total</span>
-                    <span className="font-bold text-2xl text-purple-600">$314</span>
+                    <span className="font-bold text-gray-900 dark:text-white">
+                      Total
+                    </span>
+                    <span className="font-bold text-2xl text-purple-600">
+                      $ {finalTotal}
+                    </span>
                   </div>
                 </div>
               </div>
 
               {/* Location Card */}
-              <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-800" data-aos="fade-left" data-aos-delay="100">
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                  <MapPin className="text-red-600" size={24} />
-                  Location
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300 mb-4">
-                  {eventData.location}
-                </p>
-                <button className="w-full bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white py-3 rounded-xl font-semibold hover:bg-gray-200 dark:hover:bg-gray-700 transition-all">
-                  View on Map
-                </button>
-              </div>
+              {eventData.location && (
+                <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-800">
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                    <MapPin className="text-red-600" size={24} />
+                    Location
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-300 mb-4">
+                    {eventData.location}
+                  </p>
+                  <button className="w-full bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white py-3 rounded-xl font-semibold hover:bg-gray-200 dark:hover:bg-gray-700 transition-all">
+                    View on Map
+                  </button>
+                </div>
+              )}
 
               {/* Contact Card */}
-              <div className="bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl p-6 shadow-lg text-white" data-aos="fade-left" data-aos-delay="200">
+              <div className="bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl p-6 shadow-lg text-white">
                 <h3 className="text-xl font-bold mb-3">Need Help?</h3>
                 <p className="mb-4 text-white/90">
                   Have questions about this event? Our team is here to help!
@@ -292,9 +407,11 @@ export default function EventDetailsPage() {
       {/* Share Modal */}
       {showShareModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 max-w-md w-full shadow-2xl" data-aos="zoom-in">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 max-w-md w-full shadow-2xl">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Share Event</h3>
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                Share Event
+              </h3>
               <button
                 onClick={() => setShowShareModal(false)}
                 className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
@@ -303,17 +420,21 @@ export default function EventDetailsPage() {
               </button>
             </div>
             <div className="grid grid-cols-4 gap-4">
-              {['Facebook', 'Twitter', 'LinkedIn', 'WhatsApp'].map((platform) => (
-                <button
-                  key={platform}
-                  className="flex flex-col items-center gap-2 p-4 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors"
-                >
-                  <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full flex items-center justify-center">
-                    <Share2 size={20} className="text-white" />
-                  </div>
-                  <span className="text-xs text-gray-600 dark:text-gray-400">{platform}</span>
-                </button>
-              ))}
+              {["Facebook", "Twitter", "LinkedIn", "WhatsApp"].map(
+                (platform) => (
+                  <button
+                    key={platform}
+                    className="flex flex-col items-center gap-2 p-4 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors"
+                  >
+                    <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full flex items-center justify-center">
+                      <Share2 size={20} className="text-white" />
+                    </div>
+                    <span className="text-xs text-gray-600 dark:text-gray-400">
+                      {platform}
+                    </span>
+                  </button>
+                )
+              )}
             </div>
           </div>
         </div>

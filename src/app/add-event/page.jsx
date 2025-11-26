@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { 
-  Calendar, 
-  MapPin, 
-  Users, 
+import {
+  Calendar,
+  MapPin,
+  Users,
   Clock,
   DollarSign,
   Star,
@@ -16,7 +16,7 @@ import {
   Plus,
   Trash2,
   TrendingUp,
-  Award
+  Award,
 } from "lucide-react";
 import AOS from "aos";
 import "aos/dist/aos.css";
@@ -35,7 +35,7 @@ export default function AddEventForm() {
     trending: false,
     featured: false,
     description: "",
-    features: [""]
+    features: [""],
   });
 
   const [errors, setErrors] = useState({});
@@ -52,16 +52,16 @@ export default function AddEventForm() {
     "Concert",
     "Fundraiser",
     "Corporate",
-    "Sports"
+    "Sports",
   ];
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData({
       ...formData,
-      [name]: type === "checkbox" ? checked : value
+      [name]: type === "checkbox" ? checked : value,
     });
-    
+
     if (errors[name]) {
       setErrors({ ...errors, [name]: "" });
     }
@@ -91,27 +91,39 @@ export default function AddEventForm() {
     if (!formData.date) newErrors.date = "Date is required";
     if (!formData.time.trim()) newErrors.time = "Time is required";
     if (!formData.location.trim()) newErrors.location = "Location is required";
-    if (!formData.attendees) newErrors.attendees = "Attendees count is required";
+    if (!formData.attendees)
+      newErrors.attendees = "Attendees count is required";
     if (!formData.price.trim()) newErrors.price = "Price is required";
     if (!formData.rating) newErrors.rating = "Rating is required";
-    if (!formData.description.trim()) newErrors.description = "Description is required";
+    if (!formData.description.trim())
+      newErrors.description = "Description is required";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (validateForm()) {
       const cleanedData = {
         ...formData,
-        features: formData.features.filter(f => f.trim() !== "")
+        features: formData.features.filter((f) => f.trim() !== ""),
       };
-      
       console.log("Form submitted:", cleanedData);
-      alert("Event added successfully!");
-      
+
+      try {
+        const res = await fetch("http://localhost:5000/add-event", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(cleanedData),
+        });
+        const data = await res.json();
+        console.log(data);
+      } catch (err) {
+        console.error(err);
+      }
+
       setFormData({
         image: "",
         title: "",
@@ -125,7 +137,7 @@ export default function AddEventForm() {
         trending: false,
         featured: false,
         description: "",
-        features: [""]
+        features: [""],
       });
     } else {
       alert("Please fill in all required fields!");
@@ -146,7 +158,7 @@ export default function AddEventForm() {
             <Sparkles size={20} className="animate-spin-slow" />
             <span className="font-semibold">Create New Event</span>
           </div>
-          
+
           <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-4">
             Add Your Event
           </h1>
@@ -169,11 +181,13 @@ export default function AddEventForm() {
                 value={formData.image}
                 onChange={handleChange}
                 className={`w-full px-4 py-3 bg-white/10 backdrop-blur-md border ${
-                  errors.image ? 'border-red-500' : 'border-white/20'
+                  errors.image ? "border-red-500" : "border-white/20"
                 } rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-purple-500 focus:bg-white/20 transition-all`}
                 placeholder="https://example.com/image.jpg"
               />
-              {errors.image && <p className="text-red-400 text-sm mt-1">{errors.image}</p>}
+              {errors.image && (
+                <p className="text-red-400 text-sm mt-1">{errors.image}</p>
+              )}
             </div>
 
             {/* Title */}
@@ -188,11 +202,13 @@ export default function AddEventForm() {
                 value={formData.title}
                 onChange={handleChange}
                 className={`w-full px-4 py-3 bg-white/10 backdrop-blur-md border ${
-                  errors.title ? 'border-red-500' : 'border-white/20'
+                  errors.title ? "border-red-500" : "border-white/20"
                 } rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-purple-500 focus:bg-white/20 transition-all`}
                 placeholder="Enter event title"
               />
-              {errors.title && <p className="text-red-400 text-sm mt-1">{errors.title}</p>}
+              {errors.title && (
+                <p className="text-red-400 text-sm mt-1">{errors.title}</p>
+              )}
             </div>
 
             {/* Category */}
@@ -206,21 +222,29 @@ export default function AddEventForm() {
                 value={formData.category}
                 onChange={handleChange}
                 className={`w-full px-4 py-3 bg-white/10 backdrop-blur-md border ${
-                  errors.category ? 'border-red-500' : 'border-white/20'
+                  errors.category ? "border-red-500" : "border-white/20"
                 } rounded-xl text-white focus:outline-none focus:border-purple-500 focus:bg-white/20 transition-all`}
               >
-                <option value="" className="bg-gray-900">Select a category</option>
+                <option value="" className="bg-gray-900">
+                  Select a category
+                </option>
                 {categories.map((cat) => (
                   <option key={cat} value={cat} className="bg-gray-900">
                     {cat}
                   </option>
                 ))}
               </select>
-              {errors.category && <p className="text-red-400 text-sm mt-1">{errors.category}</p>}
+              {errors.category && (
+                <p className="text-red-400 text-sm mt-1">{errors.category}</p>
+              )}
             </div>
 
             {/* Date & Time */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6" data-aos="fade-up" data-aos-delay="250">
+            <div
+              className="grid grid-cols-1 md:grid-cols-2 gap-6"
+              data-aos="fade-up"
+              data-aos-delay="250"
+            >
               <div className="group">
                 <label className="block text-white/90 text-sm font-medium mb-2 flex items-center gap-2">
                   <Calendar size={18} />
@@ -232,10 +256,12 @@ export default function AddEventForm() {
                   value={formData.date}
                   onChange={handleChange}
                   className={`w-full px-4 py-3 bg-white/10 backdrop-blur-md border ${
-                    errors.date ? 'border-red-500' : 'border-white/20'
+                    errors.date ? "border-red-500" : "border-white/20"
                   } rounded-xl text-white focus:outline-none focus:border-purple-500 focus:bg-white/20 transition-all`}
                 />
-                {errors.date && <p className="text-red-400 text-sm mt-1">{errors.date}</p>}
+                {errors.date && (
+                  <p className="text-red-400 text-sm mt-1">{errors.date}</p>
+                )}
               </div>
 
               <div className="group">
@@ -249,11 +275,13 @@ export default function AddEventForm() {
                   value={formData.time}
                   onChange={handleChange}
                   className={`w-full px-4 py-3 bg-white/10 backdrop-blur-md border ${
-                    errors.time ? 'border-red-500' : 'border-white/20'
+                    errors.time ? "border-red-500" : "border-white/20"
                   } rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-purple-500 focus:bg-white/20 transition-all`}
                   placeholder="9:00 AM - 5:00 PM"
                 />
-                {errors.time && <p className="text-red-400 text-sm mt-1">{errors.time}</p>}
+                {errors.time && (
+                  <p className="text-red-400 text-sm mt-1">{errors.time}</p>
+                )}
               </div>
             </div>
 
@@ -269,15 +297,21 @@ export default function AddEventForm() {
                 value={formData.location}
                 onChange={handleChange}
                 className={`w-full px-4 py-3 bg-white/10 backdrop-blur-md border ${
-                  errors.location ? 'border-red-500' : 'border-white/20'
+                  errors.location ? "border-red-500" : "border-white/20"
                 } rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-purple-500 focus:bg-white/20 transition-all`}
                 placeholder="Grand Convention Center, New York"
               />
-              {errors.location && <p className="text-red-400 text-sm mt-1">{errors.location}</p>}
+              {errors.location && (
+                <p className="text-red-400 text-sm mt-1">{errors.location}</p>
+              )}
             </div>
 
             {/* Attendees, Price & Rating */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6" data-aos="fade-up" data-aos-delay="350">
+            <div
+              className="grid grid-cols-1 md:grid-cols-3 gap-6"
+              data-aos="fade-up"
+              data-aos-delay="350"
+            >
               <div className="group">
                 <label className="block text-white/90 text-sm font-medium mb-2 flex items-center gap-2">
                   <Users size={18} />
@@ -289,11 +323,15 @@ export default function AddEventForm() {
                   value={formData.attendees}
                   onChange={handleChange}
                   className={`w-full px-4 py-3 bg-white/10 backdrop-blur-md border ${
-                    errors.attendees ? 'border-red-500' : 'border-white/20'
+                    errors.attendees ? "border-red-500" : "border-white/20"
                   } rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-purple-500 focus:bg-white/20 transition-all`}
                   placeholder="500"
                 />
-                {errors.attendees && <p className="text-red-400 text-sm mt-1">{errors.attendees}</p>}
+                {errors.attendees && (
+                  <p className="text-red-400 text-sm mt-1">
+                    {errors.attendees}
+                  </p>
+                )}
               </div>
 
               <div className="group">
@@ -307,11 +345,13 @@ export default function AddEventForm() {
                   value={formData.price}
                   onChange={handleChange}
                   className={`w-full px-4 py-3 bg-white/10 backdrop-blur-md border ${
-                    errors.price ? 'border-red-500' : 'border-white/20'
+                    errors.price ? "border-red-500" : "border-white/20"
                   } rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-purple-500 focus:bg-white/20 transition-all`}
                   placeholder="$299"
                 />
-                {errors.price && <p className="text-red-400 text-sm mt-1">{errors.price}</p>}
+                {errors.price && (
+                  <p className="text-red-400 text-sm mt-1">{errors.price}</p>
+                )}
               </div>
 
               <div className="group">
@@ -328,16 +368,22 @@ export default function AddEventForm() {
                   min="0"
                   max="5"
                   className={`w-full px-4 py-3 bg-white/10 backdrop-blur-md border ${
-                    errors.rating ? 'border-red-500' : 'border-white/20'
+                    errors.rating ? "border-red-500" : "border-white/20"
                   } rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-purple-500 focus:bg-white/20 transition-all`}
                   placeholder="4.8"
                 />
-                {errors.rating && <p className="text-red-400 text-sm mt-1">{errors.rating}</p>}
+                {errors.rating && (
+                  <p className="text-red-400 text-sm mt-1">{errors.rating}</p>
+                )}
               </div>
             </div>
 
             {/* Checkboxes */}
-            <div className="flex flex-wrap gap-6" data-aos="fade-up" data-aos-delay="400">
+            <div
+              className="flex flex-wrap gap-6"
+              data-aos="fade-up"
+              data-aos-delay="400"
+            >
               <label className="flex items-center gap-3 cursor-pointer group">
                 <input
                   type="checkbox"
@@ -379,11 +425,15 @@ export default function AddEventForm() {
                 onChange={handleChange}
                 rows={6}
                 className={`w-full px-4 py-3 bg-white/10 backdrop-blur-md border ${
-                  errors.description ? 'border-red-500' : 'border-white/20'
+                  errors.description ? "border-red-500" : "border-white/20"
                 } rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-purple-500 focus:bg-white/20 transition-all resize-none`}
                 placeholder="Enter detailed event description..."
               />
-              {errors.description && <p className="text-red-400 text-sm mt-1">{errors.description}</p>}
+              {errors.description && (
+                <p className="text-red-400 text-sm mt-1">
+                  {errors.description}
+                </p>
+              )}
             </div>
 
             {/* Features */}
@@ -398,7 +448,9 @@ export default function AddEventForm() {
                     <input
                       type="text"
                       value={feature}
-                      onChange={(e) => handleFeatureChange(index, e.target.value)}
+                      onChange={(e) =>
+                        handleFeatureChange(index, e.target.value)
+                      }
                       className="flex-1 px-4 py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-purple-500 focus:bg-white/20 transition-all"
                       placeholder={`Feature ${index + 1}`}
                     />
@@ -418,7 +470,7 @@ export default function AddEventForm() {
                   onClick={addFeature}
                   className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-all"
                 >
-                  <Plus size={18} />  
+                  <Plus size={18} />
                   Add Feature
                 </button>
               </div>
@@ -440,16 +492,31 @@ export default function AddEventForm() {
 
       <style jsx>{`
         @keyframes float {
-          0%, 100% { transform: translateY(0) translateX(0); }
-          50% { transform: translateY(-30px) translateX(30px); }
+          0%,
+          100% {
+            transform: translateY(0) translateX(0);
+          }
+          50% {
+            transform: translateY(-30px) translateX(30px);
+          }
         }
         @keyframes float-delay {
-          0%, 100% { transform: translateY(0) translateX(0); }
-          50% { transform: translateY(-40px) translateX(-40px); }
+          0%,
+          100% {
+            transform: translateY(0) translateX(0);
+          }
+          50% {
+            transform: translateY(-40px) translateX(-40px);
+          }
         }
         @keyframes float-slow {
-          0%, 100% { transform: translateY(0) translateX(0); }
-          50% { transform: translateY(-20px) translateX(20px); }
+          0%,
+          100% {
+            transform: translateY(0) translateX(0);
+          }
+          50% {
+            transform: translateY(-20px) translateX(20px);
+          }
         }
         .animate-float {
           animation: float 10s ease-in-out infinite;
@@ -464,8 +531,12 @@ export default function AddEventForm() {
           animation: spin 3s linear infinite;
         }
         @keyframes spin {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
         }
       `}</style>
     </div>
