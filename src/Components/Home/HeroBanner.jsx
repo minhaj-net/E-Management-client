@@ -253,7 +253,7 @@ export default function HeroBanner() {
             transform: translateY(0) translateX(0);
             opacity: 0;
           }
-          50% {
+          50% { 
             opacity: 1;
           }
           100% {

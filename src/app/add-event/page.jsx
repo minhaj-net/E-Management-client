@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import toast from "react-hot-toast";
 
 export default function AddEventForm() {
   const [formData, setFormData] = useState({
@@ -119,9 +120,10 @@ export default function AddEventForm() {
           body: JSON.stringify(cleanedData),
         });
         const data = await res.json();
+        toast.success("Add event succesfull")
         console.log(data);
       } catch (err) {
-        console.error(err);
+        toast.error(err);
       }
 
       setFormData({
@@ -140,7 +142,7 @@ export default function AddEventForm() {
         features: [""],
       });
     } else {
-      alert("Please fill in all required fields!");
+      toast.error("Please fill in all required fields!");
     }
   };
 

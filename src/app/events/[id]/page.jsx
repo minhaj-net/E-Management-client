@@ -19,6 +19,9 @@ import {
 } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
+import axios from "axios";
+import { useAuth } from "@/context/AuthProvider";
+import toast from "react-hot-toast";
 const features = [
     "20+ Expert Speakers",
     "Interactive Workshops",
@@ -34,9 +37,64 @@ export default function EventDetailsPage() {
   const [eventData, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const {user}=useAuth()
   const { id } = useParams();
   const router = useRouter();
+
+  // console.log("event data for book now ",eventData);
+
+  //handle book now button
+   const [bookedEvent, setBookedEvent] = useState([]);
+  const handleBookNow = async () => {
+    // if (!user?.email) {
+    //   toast.warning("⚠️ Please login to enroll!");
+    //   return;
+    // }
+
+    // 🔹 Check if already enrolled
+    const alreadyBook = bookedEvent.some(
+      (c) => c.BookId === eventData._id
+    );
+    if (alreadyBook) {
+      toast.info("ℹ️ You have already Book in this Event!");
+      return;
+    }
+
+    const bookedData = {
+      userEmail: user.email,
+      BookId: eventData._id,
+      title:eventData.title,
+      category:eventData.category,
+      date:eventData.date,
+      location:eventData.location,
+    };
+
+     try {
+        const res = await fetch("http://localhost:5000/my-bookedEvent", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(bookedData),
+        });
+        const data = await res.json();
+        console.log(data);
+         toast.success("✅ Booked successfully!");
+      setBookedEvent((prev) => [...prev, bookedData]); 
+      } catch (err) {
+        toast.error("❌ Booked failed!");
+      }
+
+    // try {
+    //   await axios.post(
+    //     "https://http://localhost:5000/my-bookedEvent",
+    //     bookedData
+    //   );
+    //   toast.success("✅ Booked successfully!");
+    //   setBookedEvent((prev) => [...prev, bookedData]); // update local state
+    // } catch (error) {
+    //   console.error(error);
+    //   toast.error("❌ Booked failed!");
+    // }
+  };
     
   // Fetch event data
   useEffect(() => {
@@ -68,10 +126,10 @@ export default function EventDetailsPage() {
     setShowShareModal(true);
   };
 
-  const handleBookNow = () => {
-    console.log("Booking event:", eventData?.title);
-    // Add your booking logic here
-  };
+  // const handleBookNow = () => {
+  //   console.log("Booking event:", eventData?.title);
+  //   // Add your booking logic here
+  // };
 
   const categoryColors = {
     Conference: "from-blue-500 to-cyan-500",

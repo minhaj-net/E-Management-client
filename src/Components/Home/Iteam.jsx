@@ -28,12 +28,13 @@ import "swiper/css/effect-coverflow";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import EventCard from "./EventCard";
+import Link from "next/link";
 
 const res = await fetch("http://localhost:5000/events", {
   cache: "no-store", // optional – always fresh data
 });
 const events = await res.json();
-console.log(events)
+console.log(events);
 
 export default function EventsSection() {
   const [filter, setFilter] = useState("All");
@@ -42,22 +43,24 @@ export default function EventsSection() {
     AOS.init({ duration: 1000, once: true, offset: 100 });
   }, []);
 
-  const categories = [
-    "All",
-    "Conference",
-    "Wedding",
-    "Exhibition",
-    "Party",
-    "Concert",
-    "Fundraiser",
-    "Corporate",
-    "Sports",
-  ];
 
-  const filteredEvents =
-    filter === "All"
-      ? events
-      : events.filter((event) => event.category === filter);
+
+    const categories = [
+      "All",
+      "Conference",
+      "Wedding",
+      "Exhibition",
+      "Party",
+      "Concert",
+      "Fundraiser",
+      "Corporate",
+      "Sports",
+    ];
+
+    const filteredEvents =
+      filter === "All"
+        ? events
+        : events.filter((event) => event.category === filter);
 
   return (
     <section className="relative py-20 px-4 overflow-hidden">
@@ -129,7 +132,7 @@ export default function EventsSection() {
           className="hidden lg:grid lg:grid-cols-4 gap-6 mb-12"
           data-aos="fade-up"
         >
-          {filteredEvents.map((event, index) => (
+          {filteredEvents.slice(0, 8).map((event, index) => (
             <div key={event.id} data-aos="fade-up" data-aos-delay={index * 50}>
               <EventCard event={event} />
             </div>
@@ -169,13 +172,16 @@ export default function EventsSection() {
 
         {/* View All Button */}
         <div className="text-center mt-12" data-aos="fade-up">
-          <button className="group bg-white text-purple-600 px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition-all transform hover:scale-105 shadow-2xl inline-flex items-center gap-3">
+          <Link
+            href={"/events"}
+            className="group bg-white text-purple-600 px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition-all transform hover:scale-105 shadow-2xl inline-flex items-center gap-3"
+          >
             View All Events
             <ArrowRight
               size={20}
               className="group-hover:translate-x-1 transition-transform"
             />
-          </button>
+          </Link>
         </div>
       </div>
 

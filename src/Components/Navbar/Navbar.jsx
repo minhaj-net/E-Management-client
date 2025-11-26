@@ -154,14 +154,14 @@ export default function Navbar() {
                       </p>
                     </div>
                     <Link
-                      href="/add-product"
+                      href="/add-event"
                       className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
                       onClick={closeDropdown}
                     >
                       Add Event
                     </Link>
                     <Link
-                      href="/manage-products"
+                      href="/manage-event"
                       className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
                       onClick={closeDropdown}
                     >
@@ -205,14 +205,14 @@ export default function Navbar() {
               Home
             </Link>
             <Link
-              href="/products"
+              href="/add-event"
               className="block px-3 py-2 text-white hover:bg-blue-800 rounded-md transition-colors font-medium"
               onClick={closeMenu}
             >
               Add Event
             </Link>
             <Link
-              href="/about"
+              href="/manage-event"
               className="block px-3 py-2 text-white hover:bg-blue-800 rounded-md transition-colors font-medium"
               onClick={closeMenu}
             >
@@ -240,7 +240,7 @@ export default function Navbar() {
                     </div>
                   </div>
                   <Link
-                    href="/add-product"
+                    href="/add-event"
                     className="block px-3 py-2 text-white hover:bg-blue-800 rounded-md transition-colors"
                     onClick={closeMenu}
                   >
