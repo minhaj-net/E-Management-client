@@ -30,7 +30,7 @@ import "aos/dist/aos.css";
 import EventCard from "./EventCard";
 import Link from "next/link";
 
-const res = await fetch("http://localhost:5000/events", {
+const res = await fetch("https://e-managment-green.vercel.app/events", {
   cache: "no-store", // optional – always fresh data
 });
 const events = await res.json();

@@ -16,7 +16,7 @@ export default function ManageEvents() {
   });
 
   useEffect(() => {
-    fetch("http://localhost:5000/my-bookedEvent")
+    fetch("https://e-managment-green.vercel.app/my-bookedEvent")
       .then((res) => res.json())
       .then((data) => {
         console.log("📦 Events data:", data);
@@ -55,7 +55,7 @@ export default function ManageEvents() {
   const handleSubmitUpdate = async () => {
     try {
       const response = await fetch(
-        `http://localhost:5000/my-bookedEvent/${editingEvent._id}`,
+        `https://e-managment-green.vercel.app/my-bookedEvent/${editingEvent._id}`,
         {
           method: "PUT",
           headers: {
@@ -98,7 +98,7 @@ export default function ManageEvents() {
 
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this event?")) {
-      fetch(`http://localhost:5000/my-bookedEvent/${id}`, {
+      fetch(`https://e-managment-green.vercel.app/my-bookedEvent/${id}`, {
         method: "DELETE",
       })
         .then((res) => res.json())

@@ -32,7 +32,7 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import { useAuth } from "@/context/AuthProvider";
 
-const res = await fetch("http://localhost:5000/events", {
+const res = await fetch("https://e-managment-green.vercel.app/events", {
   cache: "no-store", // optional – always fresh data
 });
 const events = await res.json();
