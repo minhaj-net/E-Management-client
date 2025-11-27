@@ -15,24 +15,23 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import { useForm } from "react-hook-form";
 import { useAuth } from "@/context/AuthProvider";
-import { useRouter, useSearchParams } from "next/navigation";
 export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const { register, handleSubmit } = useForm();
   const { creatUser, logIn } = useAuth();
   
-  const router = useRouter();
-  const params = useSearchParams();
+  // const router = useRouter();
+  // const params = useSearchParams();
   //  const redirect = params.get("redirect") 
-   const redirect = params.get("redirect") || "/"; // fallback "/"
+  //  const redirect = params.get("redirect") || "/"; // fallback "/"
 
   const onSubmit = (data) => {
-    console.log("Register:", data);
+    // console.log("Register:", data);
     logIn(data.email, data.password)
       .then((res) => {
         const user = res.user;
-         router.push(redirect); 
-        console.log("after  sign in ", user);
+        //  router.push(redirect); 
+        // console.log("after  sign in ", user);
       })
       .catch((error) => {
         console.log(error.message);
@@ -44,12 +43,12 @@ export default function LoginForm() {
   }, []);
 
   const handleGoogleLogin = () => {
-    console.log("Google Login  amar sonar bangla ami tomai valobashi");
+    // console.log("Google Login  amar sonar bangla ami tomai valobashi");
     creatUser()
       .then((res) => {
         const user = res.user;
          router.push(redirect); 
-        console.log("after google sign in ", user);
+        // console.log("after google sign in ", user);
       })
       .catch((error) => {
         console.log(error.message);

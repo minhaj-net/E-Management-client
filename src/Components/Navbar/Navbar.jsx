@@ -1,50 +1,19 @@
-/*
-
-my-nextjs-app/
-├── app/
-│   ├── layout.tsx              # Root layout (add Navbar here)
-│   ├── page.tsx                # Home page
-│   ├── globals.css             # Global styles
-│   ├── products/
-│   │   └── page.tsx
-│   ├── about/
-│   │   └── page.tsx
-│   ├── contact/
-│   │   └── page.tsx
-│   ├── deals/
-│   │   └── page.tsx
-│   ├── add-product/
-│   │   └── page.tsx
-│   └── manage-products/
-│       └── page.tsx
-├── components/
-│   └── Navbar.tsx              # Paste component code here
-├── package.json
-├── tailwind.config.ts
-└── tsconfig.json
-
-=====================================================
-FILE 1: components/Navbar.tsx
-=====================================================
-*/
-
 "use client";
 
 import React, { useState } from "react";
-import Link from "next/link";
-import { Menu, X, User, ChevronDown } from "lucide-react";
-import Image from "next/image";
-import ThemeToggler from "../ThemeToggler/ThemeToggler";
+import { Menu, X, User, ChevronDown, Sparkles } from "lucide-react";
 import { useAuth } from "@/context/AuthProvider";
+import Image from "next/image";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [userName] = useState("John Doe");
+  // const [userName] = useState("John Doe");
 
-  const { user, logOut } = useAuth();
-  console.log(user);
+  // Mock user object - replace with your actual auth context
+  const { user,logOut } = useAuth(); // Change to your useAuth() hook
+
   const toggleMenu = () => setIsOpen(!isOpen);
   const toggleDropdown = () => setShowDropdown(!showDropdown);
 
@@ -65,112 +34,141 @@ export default function Navbar() {
       .catch((err) => {
         console.log(err.message);
       });
+    // Add your logout logic here
   };
 
   const closeMenu = () => setIsOpen(false);
   const closeDropdown = () => setShowDropdown(false);
 
   return (
-    <nav className="sticky top-0 z-50 bg-white/70 backdrop-blur-md  shadow-lg">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+    <nav className="sticky top-0 z-50 bg-linear-to-r from-slate-900 via-purple-900 to-slate-900 backdrop-blur-xl shadow-2xl border-b border-white/10">
+      {/* Animated Background */}
+      <div className="absolute inset-0 overflow-hidden opacity-20 pointer-events-none">
+        {[...Array(5)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute rounded-full mix-blend-screen animate-pulse"
+            style={{
+              width: `${Math.random() * 200 + 50}px`,
+              height: `${Math.random() * 200 + 50}px`,
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              background: `radial-linear(circle, ${
+                ["rgba(139, 92, 246, 0.5)", "rgba(236, 72, 153, 0.5)"][i % 2]
+              } 0%, transparent 70%)`,
+              animationDelay: `${Math.random() * 3}s`,
+              animationDuration: `${Math.random() * 5 + 5}s`,
+            }}
+          />
+        ))}
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="flex justify-between items-center h-20">
           {/* Logo */}
-          <Link href="/" className="flex-shrink-0 flex gap-2 items-center">
-            <div className="text-white font-bold text-2xl flex items-center gap-5">
-              <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
-                <span>
-                  <Image
-                    src="https://i.ibb.co/DfktLPRk/807fe937059366c85875f39ca3699f6b.jpg"
-                    width={100}
-                    height={100}
-                    alt="Banner"
-                    className="rounded-full "
-                  />
-                </span>
+          <a href="/" className="flex-shrink-0 flex gap-3 items-center group">
+            <div className="relative">
+              <div className="w-12 h-12 bg-linear-to-br from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center transform group-hover:scale-110 transition-all duration-300 shadow-lg group-hover:shadow-purple-500/50">
+                <Sparkles className="w-6 h-6 text-white" />
+                <Image
+                  src="https://i.ibb.co/DfktLPRk/807fe937059366c85875f39ca3699f6b.jpg"
+                  width={100}
+                  height={100}
+                  alt="Banner"
+                  className="rounded-full "
+                />
               </div>
-              <span className="hidden text-black font-bold sm:block">
-                E- <span className="text-[#ed4a43]">Management</span>
+              <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-slate-900 animate-pulse"></div>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-white font-bold text-2xl tracking-tight">
+                E-
+                <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-400 to-pink-400">
+                  Management
+                </span>
+              </span>
+              <span className="text-xs text-gray-400 -mt-1">
+                Event Solutions
               </span>
             </div>
-          </Link>
+          </a>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            <Link href="/" className=" text-black font-bold">
-              Home
-            </Link>
-            <Link href="/add-event" className=" text-black font-bold">
-              Add Event
-            </Link>
-            <Link href="/manage-event" className=" text-black font-bold">
-              Manage Event
-            </Link>
-            <Link href="/events" className=" text-black font-bold">
-               Events
-            </Link>
+          <div className="hidden md:flex items-center space-x-2">
+            {[
+              { href: "/", label: "Home" },
+              { href: "/add-event", label: "Add Event" },
+              { href: "/manage-event", label: "Manage Event" },
+              { href: "/events", label: "Events" },
+            ].map((link, idx) => (
+              <a
+                key={idx}
+                href={link.href}
+                className="relative px-5 py-2.5 text-white font-semibold rounded-xl hover:bg-white/10 transition-all duration-300 group overflow-hidden"
+              >
+                <span className="relative z-10">{link.label}</span>
+                <div className="absolute inset-0 bg-linear-to-r from-purple-600 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-0"></div>
+              </a>
+            ))}
           </div>
 
           {/* Auth Section - Desktop */}
-          <div className="hidden md:flex items-center">
+          <div className="hidden md:flex items-center gap-4">
             {!user ? (
               <div className="flex gap-3">
-                <Link
-                  href={"/Register"}
+                <a
+                  href="/Register"
                   onClick={handleLogin}
-                  className="px-4 py-2 bg-white text-blue-600 rounded-lg hover:bg-blue-50 transition-all font-medium"
+                  className="px-6 py-2.5 bg-linear-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 font-semibold hover:scale-105"
                 >
                   Sign In
-                </Link>
+                </a>
               </div>
             ) : (
               <div className="relative">
                 <button
                   onClick={toggleDropdown}
-                  className="flex items-center gap-2 px-4 py-2 bg-white text-blue-600 rounded-lg hover:bg-blue-50 transition-all font-medium"
+                  className="flex items-center gap-3 px-5 py-2.5 bg-white/10 backdrop-blur-md text-white rounded-xl hover:bg-white/20 transition-all duration-300 font-semibold border border-white/20 hover:border-white/40"
                 >
-                  <div>
-                    <Image
-                      src={user.photoURL}
-                      alt="My Picture"
-                      width={35}
-                      height={35}
-                    />
+                  <div className="w-8 h-8 bg-linear-to-br from-purple-600 to-pink-600 rounded-full flex items-center justify-center">
+                    <User className="w-5 h-5 text-white" />
                   </div>
                   <span>{user.displayName}</span>
                   <ChevronDown
                     size={16}
-                    className={`transition-transform ${
+                    className={`transition-transform duration-300 ${
                       showDropdown ? "rotate-180" : ""
                     }`}
                   />
                 </button>
 
                 {showDropdown && (
-                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl py-2 border border-gray-100">
-                    <div className="px-4 py-3 border-b border-gray-100">
-                      <p className="text-sm text-gray-500">Signed in as</p>
-                      <p className="text-sm font-semibold text-gray-900">
+                  <div className="absolute right-0 mt-3 w-64 bg-slate-900/95 backdrop-blur-xl rounded-2xl shadow-2xl py-2 border border-white/20 animate-in fade-in zoom-in duration-200">
+                    <div className="px-5 py-4 border-b border-white/10">
+                      <p className="text-xs text-gray-400 mb-1">Signed in as</p>
+                      <p className="text-sm font-semibold text-white flex items-center gap-2">
+                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                         {user.displayName}
                       </p>
                     </div>
-                    <Link
+                    <a
                       href="/add-event"
-                      className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                      className="block px-5 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-all duration-200 font-medium"
                       onClick={closeDropdown}
                     >
                       Add Event
-                    </Link>
-                    <Link
+                    </a>
+                    <a
                       href="/manage-event"
-                      className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                      className="block px-5 py-3 text-gray-300 hover:bg-white/10 hover:text-white transition-all duration-200 font-medium"
                       onClick={closeDropdown}
                     >
                       Manage Event
-                    </Link>
-                    <div className="border-t border-gray-100 mt-2">
+                    </a>
+                    <div className="border-t border-white/10 mt-2">
                       <button
                         onClick={handleLogout}
-                        className="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 transition-colors"
+                        className="block w-full text-left px-5 py-3 text-red-400 hover:bg-red-500/20 transition-all duration-200 font-medium"
                       >
                         Logout
                       </button>
@@ -185,7 +183,7 @@ export default function Navbar() {
           <div className="md:hidden">
             <button
               onClick={toggleMenu}
-              className="text-white hover:text-blue-200 transition-colors"
+              className="text-white hover:bg-white/10 p-2.5 rounded-xl transition-all duration-300 hover:scale-110"
             >
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -195,67 +193,66 @@ export default function Navbar() {
 
       {/* Mobile Navigation */}
       {isOpen && (
-        <div className="md:hidden bg-blue-700">
-          <div className="px-2 pt-2 pb-3 space-y-1">
-            <Link
-              href="/"
-              className="block px-3 py-2 text-white hover:bg-blue-800 rounded-md transition-colors font-medium"
-              onClick={closeMenu}
-            >
-              Home
-            </Link>
-            <Link
-              href="/add-event"
-              className="block px-3 py-2 text-white hover:bg-blue-800 rounded-md transition-colors font-medium"
-              onClick={closeMenu}
-            >
-              Add Event
-            </Link>
-            <Link
-              href="/manage-event"
-              className="block px-3 py-2 text-white hover:bg-blue-800 rounded-md transition-colors font-medium"
-              onClick={closeMenu}
-            >
-              Manage Event
-            </Link>
+        <div className="md:hidden bg-slate-900/95 backdrop-blur-xl border-t border-white/10 animate-in slide-in-from-top duration-300">
+          <div className="px-4 pt-4 pb-6 space-y-2">
+            {[
+              { href: "/", label: "Home" },
+              { href: "/add-event", label: "Add Event" },
+              { href: "/manage-event", label: "Manage Event" },
+              { href: "/events", label: "Events" },
+            ].map((link, idx) => (
+              <a
+                key={idx}
+                href={link.href}
+                className="block px-4 py-3 text-white hover:bg-white/10 rounded-xl transition-all duration-200 font-semibold"
+                onClick={closeMenu}
+              >
+                {link.label}
+              </a>
+            ))}
 
             {/* Mobile Auth Section */}
-            <div className="border-t border-blue-600 pt-3 mt-3">
+            <div className="border-t border-white/10 pt-4 mt-4">
               {!isLoggedIn ? (
-                <div className="space-y-2 px-3">
-                  <Link
-                    href={"/Register"}
+                <div className="space-y-2 px-2">
+                  <a
+                    href="/Register"
                     onClick={handleLogin}
-                    className="w-full px-4 py-2 bg-white text-blue-600 rounded-lg hover:bg-blue-50 transition-all font-medium"
+                    className="block w-full text-center px-6 py-3 bg-linear-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 font-semibold"
                   >
                     Sign In
-                  </Link>
+                  </a>
                 </div>
               ) : (
-                <div className="space-y-1">
-                  <div className="px-3 py-2 text-white font-medium border-b border-blue-600 mb-2">
-                    <div className="flex items-center gap-2">
-                      <User size={20} />
-                      <span>{userName}</span>
+                <div className="space-y-2">
+                  <div className="px-4 py-3 text-white font-semibold bg-white/5 rounded-xl mb-3 border border-white/10">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-linear-to-br from-purple-600 to-pink-600 rounded-full flex items-center justify-center">
+                        <User size={20} />
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-400">Signed in as</p>
+                        <p className="text-sm font-bold">{user.displayName}</p>
+                      </div>
                     </div>
                   </div>
-                  <Link
+                  <a
                     href="/add-event"
-                    className="block px-3 py-2 text-white hover:bg-blue-800 rounded-md transition-colors"
+                    className="block px-4 py-3 text-white hover:bg-white/10 rounded-xl transition-all duration-200 font-medium"
                     onClick={closeMenu}
                   >
                     Add Event
-                  </Link>
-                  <Link
+                  </a>
+                  <a
                     href="/manage-event"
-                    className="block px-3 py-2 text-white hover:bg-blue-800 rounded-md transition-colors"
+                    className="block px-4 py-3 text-white hover:bg-white/10 rounded-xl transition-all duration-200 font-medium"
                     onClick={closeMenu}
                   >
                     Manage Event
-                  </Link>
+                  </a>
                   <button
                     onClick={handleLogout}
-                    className="w-full text-left px-3 py-2 text-red-200 hover:bg-red-600 rounded-md transition-colors mt-2"
+                    className="w-full text-left px-4 py-3 text-red-400 hover:bg-red-500/20 rounded-xl transition-all duration-200 font-medium mt-2"
                   >
                     Logout
                   </button>
@@ -265,6 +262,9 @@ export default function Navbar() {
           </div>
         </div>
       )}
+
+      {/* Bottom Glow Line */}
+      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-linear-to-r from-purple-600 via-pink-600 to-purple-600"></div>
     </nav>
   );
 }

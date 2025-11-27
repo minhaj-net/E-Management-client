@@ -19,7 +19,7 @@ export default function ManageEvents() {
     fetch("https://e-managment-green.vercel.app/my-bookedEvent")
       .then((res) => res.json())
       .then((data) => {
-        console.log("📦 Events data:", data);
+        // console.log("📦 Events data:", data);
         setEvents(data);
         setLoading(false);
       })

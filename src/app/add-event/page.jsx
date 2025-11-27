@@ -111,7 +111,7 @@ export default function AddEventForm() {
         ...formData,
         features: formData.features.filter((f) => f.trim() !== ""),
       };
-      console.log("Form submitted:", cleanedData);
+      // console.log("Form submitted:", cleanedData);
 
       try {
         const res = await fetch("https://e-managment-green.vercel.app/add-event", {
@@ -121,7 +121,7 @@ export default function AddEventForm() {
         });
         const data = await res.json();
         toast.success("Add event succesfull")
-        console.log(data);
+        // console.log(data);
       } catch (err) {
         toast.error(err);
       }

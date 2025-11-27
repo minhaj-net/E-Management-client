@@ -19,16 +19,15 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { useAuth } from "@/context/AuthProvider";
 import toast from "react-hot-toast";
-import { useRouter, useSearchParams } from "next/navigation";
 
 export function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const { creatUser, creatInEmailAndPass, updateUser } = useAuth();
   const { register, handleSubmit } = useForm();
-  const router = useRouter();
-    const params = useSearchParams();
+  // const router = useRouter();
+    // const params = useSearchParams();
     //  const redirect = params.get("redirect") 
-     const redirect = params.get("redirect") || "/"; // fallback "/"
+    //  const redirect = params.get("redirect") || "/"; // fallback "/"
   
 
   const onSubmit = (data) => {
@@ -36,11 +35,11 @@ export function RegisterForm() {
       displayName: data.name,
       photoURL: data.name,
     };
-    console.log("Register:", data);
+    // console.log("Register:", data);
     creatInEmailAndPass(data.email, data.password)
       .then((res) => {
         const user = res.user;
-        router.push(redirect);
+        // router.push(redirect);
         // updateUser(updateData)
         //   .then(() => {
         //     console.log(res.user);
@@ -61,15 +60,15 @@ export function RegisterForm() {
   }, []);
 
   const handleGoogleLogin = () => {
-    console.log("Google Login  amar sonar bangla ami tomai valobashi");
+    // console.log("Google Login  amar sonar bangla ami tomai valobashi");
     creatUser()
       .then((res) => {
         const user = res.user;
         router.push(redirect);
-        console.log("after google sign in ", user);
+        // console.log("after google sign in ", user);
       })
       .catch((error) => {
-        console.log(error.message);
+        // console.log(error.message);
       });
   };
 
