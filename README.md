@@ -22,7 +22,7 @@ This project is a modern and user-friendly Event Management System. It allows us
 
 ## Project Overview  
 Summarize the project objectives, key metrics, and any relevant statistics.  
-![App Screenshot](https://i.ibb.co/FLPPTn04/image.png)
+![App Screenshot](https://i.ibb.co/Dqpy6rY/event.png)
 
 ---
 
@@ -71,7 +71,7 @@ List required dependencies or major libraries:
 
 ```bash
 git clone https://github.com/minhaj-net/E-Management-client.git
-cd zapShift-client
+cd Gadget-pulse-client
 npm install
 ```
 
@@ -91,5 +91,5 @@ npm run dev
 
 ## Contact
 
-**Live URL:** [Live Site](https://zap-shift-proj.netlify.app/)
+**Live URL:** [Live Site](https://event-management-nine-lac.vercel.app/)
 **Email:** [minhaj](infoglb.net@gmail.com)
