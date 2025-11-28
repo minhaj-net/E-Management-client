@@ -11,10 +11,6 @@ This project is a modern and user-friendly Event Management System that allows u
 - [Tech Stack](#tech-stack)
 - [Dependencies](#dependencies)
 - [Installation️ & Setup](#installation--setup)
-- [Folder Structure](#folder-structure)
-- [Contributions](#contributions)
-- [How to Contribute](#how-to-contribute)
-- [License](#license)
 - [Contact](#contact)
 
 ---
